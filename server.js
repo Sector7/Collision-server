@@ -18,9 +18,6 @@ var dgram = require('dgram');
 
 // Server specific includes
 var argv = require('./node-optimist').argv;
-commandFactory = require('./command.js').construct(argv, log);
-
-var test_message = new Buffer('{"to":"beckhoff____","cmd":"toggle","tag":"Kitchen.Ceiling","from":"0d57068e44d4fb22f7d0831144f51d90"}\n');
 
 // Setup the send and recieve sockets
 var server = dgram.createSocket("udp4");
@@ -30,14 +27,28 @@ var client = dgram.createSocket("udp4");
 client.bind(8282);
 client.setBroadcast(true);
 
+commandFactory = require('./command.js').construct(argv, log, client);
+xbeenodeFactory = require('./xbeenode.js').construct(argv, log, client);
+
+var players = {};
+
 server.on("message", function (msg, rinfo) {
   var command = commandFactory.create(msg);
   if (command == undefined) {
     return;
   } 
+  else {
+    switch (command.cmd) {
+      case "node":
+        players[command.node.addr64] = xbeenodeFactory.create(command.node);
+      break;
+      case "nodeType":
+        players[command.addr64].type = command.nodeType;
+      break;
+    }
+  }
 
- // console.log(command);
-//  console.log("server got: " + msg + " from " + rinfo.address + ":" + rinfo.port);
+  //console.log("server got: " + msg + " from " + rinfo.address + ":" + rinfo.port);
 });
 
 server.on("listening", function () {
@@ -45,7 +56,5 @@ server.on("listening", function () {
 //  console.log("server listening " + address.address + ":" + address.port);
 });
 
-client.send(test_message, 0, test_message.length, 8282, "192.168.1.255", function(err, bytes) {
-
-});
+commandFactory.send( { cmd: "discover", } );
 
