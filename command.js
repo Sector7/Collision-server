@@ -1,5 +1,17 @@
+exports.argv = {};
+exports.log = {};
+
+exports.construct = function (argv, log) {
+  this.argv = argv;
+  this.log = log;
+  return this;
+}
+
 exports.create = function (message) {
-  data = JSON.parse(message);
-  console.log(data);
-  console.log('\n');
-};
+  var data = JSON.parse(message);
+  if (this.argv.v >= this.log.level.DEBUG) {
+    console.log(data);
+  }
+  return data;
+}
+
