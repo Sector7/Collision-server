@@ -16,9 +16,8 @@ exports.handle_incoming_command = function (msg, rinfo) {
     return;
   }
 
-  if (this.argv.v >= this.log.level.INFORMATIONAL) {
-    console.log("Got command of type: " + commandPacket.cmd);
-  }
+  log.log("Got command: " + commandPacket.cmd, this.log.level.DEBUG);
+  log.log("Got command of type: " + commandPacket.cmd, this.log.level.INFORMATIONAL);
 
   switch (commandPacket.cmd) {
     case 'node':
@@ -29,9 +28,7 @@ exports.handle_incoming_command = function (msg, rinfo) {
       }
       this.clients[newNode.addr64] = newNode;
 
-      if (server.argv.v >= this.log.level.NOTICE) {
-        console.log("Found new node: " + newNode.addr64);
-      }
+      log.log("Found new node: " + newNode.addr64, this.log.level.NOTICE);
       if (server.argv.v >= this.log.level.DEBUG) {
         console.log("List of clients:");
         console.log(this.clients);
@@ -45,9 +42,7 @@ exports.handle_incoming_command = function (msg, rinfo) {
       };
       sendCommand(remote_message, this.client);
 
-      if (this.argv.v >= log.level.DEBUG) {
-        console.log(remote_message);
-      }
+      log.log(remote_message, log.level.DEBUG);
     break;
     case 'nodeType':
       if (this.clients[commandPacket.addr64] != undefined ) {
@@ -56,30 +51,24 @@ exports.handle_incoming_command = function (msg, rinfo) {
         this.clients[commandPacket.addr64] = { model:commandPacket.model };
       }
 
-      if (server.argv.v >= this.log.level.DEBUG) {
-        console.log("Got nodetype for " + commandPacket.addr64 + "\nList of clients:");
-        console.log(this.clients);
-      }
+      log.log("Got nodetype for " + commandPacket.addr64, this.log.level.NOTICE);
+      log.log("List of clients:", this.log.level.DEBUG);
+      log.log(this.clients, this.log.level.DEBUG);
     break;
     case 'event':
       var event = eventFactory.create(commandPacket.event);
     break;
   }
 
-    if (server.argv.v >= log.level.DEBUG) {
-      console.log(commandPacket);
-      console.log("server got: " + msg + " from " + rinfo.address + ":" + rinfo.port);
-  }
+  log.log("server got: " + msg + " from " + rinfo.address + ":" + rinfo.port, log.level.DEBUG);
 }
 
 exports.start = function (config) {
   this.config = config;
 
   this.server_is_listening = function(server) {
-    if (this.argv.v >= log.level.NOTICE) {
-      var address = server.address();
-      console.log("Server listening on " + address.address + ":" + address.port);
-    }
+    var address = server.address();
+    log.log("Server listening on " + address.address + ":" + address.port, log.level.NOTICE);
   }
 
   this.open_sockets = function() {

@@ -1,20 +1,11 @@
 #!/usr/bin/node
 
-log = {
-  level : {
-    DEBUG : 7,
-    INFORMATIONAL : 6,
-    NOTICE : 5,
-    WARNING : 4,
-    ERROR : 3,
-    ALERT : 2,
-    CRITICAL : 1,
-    EMERGENCY : 0,
-  }
-}
-
-// Parse incoming CLI arguments.
-var argv = require('optimist').argv;
+// @TODO Make all these un-global?
+argv = require('./includes/arguments.js').construct();
+log = require('./includes/log.js').construct(argv);
+server = require('./includes/gameserver.js').construct(argv, log);
+commandFactory = require('./includes/command.js').construct(argv, log);
+xbeeNodeFactory = require('./includes/xbeenode.js').construct(argv, log);
 
 sendCommand = function (command, client) {
   if (argv.v >= log.level.INFORMATIONAL) {
@@ -31,9 +22,7 @@ sendCommand = function (command, client) {
   client.send(command_buffer, 0, command_buffer.length, 8282, "192.168.0.255", function(err, bytes) {});
 }
 
-server = require('./includes/gameserver.js').construct(argv, log);
-commandFactory = require('./includes/command.js').construct(argv, log);
-xbeeNodeFactory = require('./includes/xbeenode.js').construct(argv, log);
-
 // Load configuration and start the server.
-require('./includes/config.js').construct(argv, log, 'config.json', function() { server.start() });
+require('./includes/config.js').construct(argv, log, 'config.json', function() {
+  server.start()
+});

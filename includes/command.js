@@ -10,17 +10,13 @@ exports.construct = function (argv, log, client) {
 
 exports.createFromText = function (message) {
   var data = JSON.parse(message);
-  if (this.argv.v >= this.log.level.DEBUG) {
-    console.log(data);
-  }
+  log.log(data, this.log.level.DEBUG);
   return data;
 }
 
 exports.createFromObject = function (object) {
   object.from = "gameServer";
   var data = JSON.stringify(object);
-  if (this.argv.v >= this.log.level.DEBUG) {
-    console.log(data);
-  }
+  log.log(data, this.log.level.DEBUG);
   return data + "\n";
 }

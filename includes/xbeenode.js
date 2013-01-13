@@ -9,10 +9,6 @@ exports.construct = function (argv, log) {
 
 exports.create = function (newNode) {
   node = newNode;
-
-  if (this.argv.v >= this.log.level.INFORMATIONAL) {
-    console.log(node);
-  }
-
+  log.log(node, this.log.level.INFORMATIONAL);
   return node;
 }
