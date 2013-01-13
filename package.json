@@ -4,8 +4,10 @@
   "author": "Some confused person",
   "dependencies": {
    "optimist": "= 0.3.x"
-   "optimist": "= 0.1.x"
   },
   "version": "0.0.1",
-  "engine": "node 0.8.x"
+  "engine": "node 0.8.x",
+  "devDependencies": {
+    "mocha": "= 1.8.x"
+  }
 }
